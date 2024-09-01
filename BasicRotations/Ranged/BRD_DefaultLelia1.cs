@@ -86,21 +86,23 @@ public sealed class BRD_DefaultLelia1 : BardRotation
 
                 if (RadiantFinalePvE.CanUse(out act) && Song == Song.WANDERER && (!BattleVoicePvE.Cooldown.IsCoolingDown || BattleVoicePvE.Cooldown.ElapsedAfter(118)))
                 {
-                    if (Song == Song.WANDERER && TheWanderersMinuetPvE.EnoughLevel) return true;
+                    if (TheWanderersMinuetPvE.EnoughLevel) return true;
                 }
 
-                if (BattleVoicePvE.CanUse(out act, skipAoeCheck: true))
+                if (BattleVoicePvE.CanUse(out act, skipAoeCheck: true) && Song == Song.WANDERER)
                 {
-                    if (Player.HasStatus(true, StatusID.RadiantFinale) /*&& RadiantFinalePvE.Cooldown.ElapsedOneChargeAfterGCD(1)*/) return true;
+
+                    if (Player.HasStatus(true, StatusID.RadiantFinale_2964) && RadiantFinalePvE.Cooldown.ElapsedOneChargeAfterGCD(1)) return true;
                 }
 
-                if (RagingStrikesPvE.CanUse(out act, isLastAbility: true))
+                if (RagingStrikesPvE.CanUse(out act, isLastAbility: true) && Song == Song.WANDERER)
                 {
                     if (nextGCD.IsTheSameTo(true, BattleVoicePvE)) return true;
                     if (nextGCD.IsTheSameTo(true, RadiantEncorePvE)) return true;
 
-                    if (Player.HasStatus(true, StatusID.BattleVoice) /*&& RadiantFinalePvE.Cooldown.ElapsedOneChargeAfterGCD(1)*/) return true;
+                    if (Player.HasStatus(true, StatusID.BattleVoice) && RadiantFinalePvE.Cooldown.ElapsedOneChargeAfterGCD(1)) return true;
                 }
+
                 if (!Player.HasStatus(true, StatusID.HawksEye_3861) && Player.HasStatus(true, StatusID.RagingStrikes) && BarragePvE.CanUse(out act))
                 {
                     if (Song == Song.WANDERER && TheWanderersMinuetPvE.EnoughLevel) return true;
@@ -111,29 +113,35 @@ public sealed class BRD_DefaultLelia1 : BardRotation
             {
                 if (!Player.HasStatus(true, StatusID.RagingStrikes) && BattleVoicePvE.CanUse(out act, skipAoeCheck: true))
                 {
+                    if ((TheWanderersMinuetPvE.IsEnabled || ArmysPaeonPvE.IsEnabled || MagesBalladPvE.IsEnabled)) return true;
+                    if (Song != Song.NONE && (TheWanderersMinuetPvE.IsEnabled || ArmysPaeonPvE.IsEnabled || MagesBalladPvE.IsEnabled)) return true;
                     if (Song == Song.WANDERER && TheWanderersMinuetPvE.EnoughLevel) return true;
-                    if (Song != Song.NONE && !TheWanderersMinuetPvE.EnoughLevel) return true;
+                    //if (Song != Song.NONE && !TheWanderersMinuetPvE.EnoughLevel) return true;
                 }
 
                 if (RagingStrikesPvE.CanUse(out act, isLastAbility: true))
                 {
+                    if ((TheWanderersMinuetPvE.IsEnabled || ArmysPaeonPvE.IsEnabled || MagesBalladPvE.IsEnabled)) return true;
+                    if (Song != Song.NONE && (TheWanderersMinuetPvE.IsEnabled || ArmysPaeonPvE.IsEnabled || MagesBalladPvE.IsEnabled)) return true;
                     if (Song == Song.WANDERER && TheWanderersMinuetPvE.EnoughLevel) return true;
-                    if (Song != Song.NONE && !TheWanderersMinuetPvE.EnoughLevel) return true;
+                    //if (Song != Song.NONE && !TheWanderersMinuetPvE.EnoughLevel) return true;
                 }
                 if (Player.HasStatus(true, StatusID.RagingStrikes) && !Player.HasStatus(true, StatusID.HawksEye_3861) && BarragePvE.CanUse(out act))
                 {
+                    if ((TheWanderersMinuetPvE.IsEnabled || ArmysPaeonPvE.IsEnabled || MagesBalladPvE.IsEnabled)) return true;
+                    if (Song != Song.NONE && (TheWanderersMinuetPvE.IsEnabled || ArmysPaeonPvE.IsEnabled || MagesBalladPvE.IsEnabled)) return true;
                     if (Song == Song.WANDERER && TheWanderersMinuetPvE.EnoughLevel) return true;
-                    if (Song != Song.NONE && !TheWanderersMinuetPvE.EnoughLevel) return true;
+                    //if (Song != Song.NONE && !TheWanderersMinuetPvE.EnoughLevel) return true;
                 }
                     
             }
         }
-        else
+        else if (Song == Song.NONE && !MagesBalladPvE.Cooldown.IsCoolingDown)
         {
              if ((BloodletterPvE.Cooldown.CurrentCharges > 1) &&  BloodletterPvE.CanUse(out act, usedUp: true)) return true;
-             if (BattleVoicePvE.CanUse(out act, skipAoeCheck: true)) return true;
-             if (RagingStrikesPvE.CanUse(out act)) return true;
-             if (Player.HasStatus(true, StatusID.RagingStrikes) && BarragePvE.CanUse(out act)) return true;
+             if (InCombat && BattleVoicePvE.CanUse(out act, skipAoeCheck: true)) return true;
+             if (InCombat && RagingStrikesPvE.CanUse(out act)) return true;
+             if (InCombat && Player.HasStatus(true, StatusID.RagingStrikes) && BarragePvE.CanUse(out act)) return true;
         }
 
         //UpDateEnd
