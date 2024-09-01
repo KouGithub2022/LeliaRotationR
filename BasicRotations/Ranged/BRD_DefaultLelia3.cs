@@ -7,6 +7,9 @@ namespace DefaultRotations.Ranged;
 public sealed class BRD_DefaultLelia3 : BardRotation
 {
     #region Config Options
+    [RotationConfig(CombatType.PvE, Name = "Tincture/Gemdraught Usage (Experimental)")]
+    public bool ExperimentalPot { get; set; } = false;
+
     [RotationConfig(CombatType.PvE, Name = @"Use Raging Strikes on ""Wanderer's Minuet""")]
     //[RotationConfig(CombatType.PvE, Name = "猛者をメヌエット時に使用する。")]
     public bool BindWAND { get; set; } = false;
@@ -32,6 +35,15 @@ public sealed class BRD_DefaultLelia3 : BardRotation
     private float ARMYRemainTime => 45 - ARMYTime;
     #endregion
 
+    #region Countdown logic
+    // Defines logic for actions to take during the countdown before combat starts.
+    protected override IAction? CountDownAction(float remainTime)
+    {
+        if (remainTime <= 0.7f && UseBurstMedicine(out var act)) return act;
+        return base.CountDownAction(remainTime);
+    }
+    #endregion
+
     #region oGCD Logic
     protected override bool EmergencyAbility(IAction nextGCD, out IAction? act)
     {
@@ -53,6 +65,12 @@ public sealed class BRD_DefaultLelia3 : BardRotation
     protected override bool AttackAbility(IAction nextGCD, out IAction? act)
     {
         act = null;
+
+        if (IsBurst && ExperimentalPot)
+        {
+            if (UseBurstMedicine(out act)) return true;
+        }
+
         if (Song == Song.NONE && InCombat)
         {
             switch (FirstSong)
@@ -79,10 +97,6 @@ public sealed class BRD_DefaultLelia3 : BardRotation
         {
             if (BloodletterPvE.CanUse(out act)) return true;
 
-            //if (RadiantFinalePvE.CanUse(out act, skipAoeCheck: true)) return true;
-            //if (BattleVoicePvE.CanUse(out act, skipAoeCheck: true)) return true;
-            //if (RagingStrikesPvE.CanUse(out act)) return true;
-
             if (RadiantFinalePvE.CanUse(out act) && Song == Song.WANDERER && (!BattleVoicePvE.Cooldown.IsCoolingDown || BattleVoicePvE.Cooldown.ElapsedAfter(118)))
             {
                 if (BindWANDEnough && Song == Song.WANDERER && TheWanderersMinuetPvE.EnoughLevel) return true;
@@ -91,7 +105,7 @@ public sealed class BRD_DefaultLelia3 : BardRotation
 
             if (BattleVoicePvE.CanUse(out act, skipAoeCheck: true))
             {
-                if (Player.HasStatus(true, StatusID.RadiantFinale) /*&& RadiantFinalePvE.Cooldown.ElapsedOneChargeAfterGCD(1)*/) return true;
+                if (Player.HasStatus(true, StatusID.RadiantFinale_2964) /*&& RadiantFinalePvE.Cooldown.ElapsedOneChargeAfterGCD(1)*/) return true;
             }
 
             if (RagingStrikesPvE.CanUse(out act))
@@ -165,14 +179,6 @@ public sealed class BRD_DefaultLelia3 : BardRotation
 
             if (BloodletterPvE.CanUse(out act, usedUp: true)) return true;
         }
-
-        // Allow full use of RagingStrikes
-        //if (Player.HasStatus(true, StatusID.RagingStrikes))
-        //{
-        //    if (HeartbreakShotPvE.CanUse(out act, usedUp: true)) return true;
-        //    if (RainOfDeathPvE.CanUse(out act, usedUp: true)) return true;
-        //    if (BloodletterPvE.CanUse(out act, usedUp: true)) return true;
-        //}
 
         if (BloodletterLogic(out act)) return true;
 
