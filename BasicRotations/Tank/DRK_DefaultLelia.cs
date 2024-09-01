@@ -1,6 +1,6 @@
 namespace DefaultRotations.Tank;
 
-[Rotation("Lelia's Default", CombatType.PvE, GameVersion = "7.00")]
+[Rotation("Lelia's Default", CombatType.PvE, GameVersion = "7.05")]
 [SourceCode(Path = "main/DefaultRotations/Tank/DRK_Balance.cs")]
 [Api(3)]
 public sealed class DRK_DefaultLelia : DarkKnightRotation
@@ -55,12 +55,15 @@ public sealed class DRK_DefaultLelia : DarkKnightRotation
 
         //30
         if ((!RampartPvE.Cooldown.IsCoolingDown || RampartPvE.Cooldown.ElapsedAfter(60)) && ShadowWallPvE.CanUse(out act)) return true;
+        if ((!RampartPvE.Cooldown.IsCoolingDown || RampartPvE.Cooldown.ElapsedAfter(60)) && ShadowedVigilPvE.CanUse(out act)) return true;
 
         //20
         if (ShadowWallPvE.Cooldown.IsCoolingDown && ShadowWallPvE.Cooldown.ElapsedAfter(60) && RampartPvE.CanUse(out act)) return true;
+        if (ShadowedVigilPvE.Cooldown.IsCoolingDown && ShadowedVigilPvE.Cooldown.ElapsedAfter(60) && RampartPvE.CanUse(out act)) return true;
 
         //if (!InTwoMIsBurst && DarkMissionaryPvE.CanUse(out act)) return true;
         //if (!InTwoMIsBurst && ReprisalPvE.CanUse(out act, skipAoeCheck: true)) return true;
+        
         if (InCombat && ReprisalPvE.CanUse(out act)) return true;
 
         return base.EmergencyAbility(nextGCD, out act);
@@ -98,9 +101,11 @@ public sealed class DRK_DefaultLelia : DarkKnightRotation
 
         //30
         if ((!RampartPvE.Cooldown.IsCoolingDown || RampartPvE.Cooldown.ElapsedAfter(60)) && ShadowWallPvE.CanUse(out act)) return true;
+        if ((!RampartPvE.Cooldown.IsCoolingDown || RampartPvE.Cooldown.ElapsedAfter(60)) && ShadowedVigilPvE.CanUse(out act)) return true;
 
         //20
         if (ShadowWallPvE.Cooldown.IsCoolingDown && ShadowWallPvE.Cooldown.ElapsedAfter(60) && RampartPvE.CanUse(out act)) return true;
+        if (ShadowedVigilPvE.Cooldown.IsCoolingDown && ShadowedVigilPvE.Cooldown.ElapsedAfter(60) && RampartPvE.CanUse(out act)) return true;
 
         if (ReprisalPvE.CanUse(out act)) return true;
 
@@ -164,7 +169,7 @@ public sealed class DRK_DefaultLelia : DarkKnightRotation
     #region GCD Logic
     protected override bool GeneralGCD(out IAction? act)
     {
-        if (ScarletDeliriumPvE.CanUse(out act,usedUp:true, skipComboCheck: true)) return true;
+        if (DisesteemPvE.CanUse(out act)) return true;
 
         //Use Blood
         if (UseBlood)
