@@ -100,7 +100,7 @@ public sealed class BRD_DefaultLelia1 : BardRotation
                     if (nextGCD.IsTheSameTo(true, BattleVoicePvE)) return true;
                     if (nextGCD.IsTheSameTo(true, RadiantEncorePvE)) return true;
 
-                    if (Player.HasStatus(true, StatusID.BattleVoice) && RadiantFinalePvE.Cooldown.ElapsedOneChargeAfterGCD(1)) return true;
+                    if (Player.HasStatus(true, StatusID.BattleVoice) /*&& RadiantFinalePvE.Cooldown.ElapsedOneChargeAfterGCD(1)*/) return true;
                 }
 
                 if (!Player.HasStatus(true, StatusID.HawksEye_3861) && Player.HasStatus(true, StatusID.RagingStrikes) && BarragePvE.CanUse(out act))
