@@ -1,8 +1,9 @@
 using RotationSolver.Basic.Rotations.Duties;
+using static Lumina.Data.Parsing.Layer.LayerCommon;
 
 namespace DefaultRotations.Tank;
 
-[Rotation("Lelia's Default", CombatType.PvE, GameVersion = "7.00")]
+[Rotation("Lelia's Low", CombatType.PvE, GameVersion = "7.00")]
 [SourceCode(Path = "main/DefaultRotations/Tank/PLD_Default.cs")]
 [Api(3)]
 public class PLD_DefaultLelia : PaladinRotation
@@ -68,6 +69,7 @@ public class PLD_DefaultLelia : PaladinRotation
 
         if (CoverPvE.CanUse(out act) && CoverPvE.Target.Target?.DistanceToPlayer() < 10 && CoverPvE.Target.Target?.GetHealthRatio() < CoverRatio) return true;
 
+        //[DefenseSingleAbility]
         // If the player has the Hallowed Ground status, don't use any abilities.
         if (!Player.HasStatus(true, StatusID.HallowedGround))
         {
@@ -87,14 +89,22 @@ public class PLD_DefaultLelia : PaladinRotation
             //if (RampartPvE.CanUse(out act, usedUp: true)) return true;
             //UPEnd
             // If Reprisal can be used, use it and return true.
-            if (ReprisalPvE.CanUse(out act)) return true;
+            
+            //if (ReprisalPvE.CanUse(out act)) return true;
 
+        }
+
+        //[DefenseAreaAbility]
+        {
+            if (DivineVeilPvE.CanUse(out act)) return true;
+            if (!Player.HasStatus(true, StatusID.Bulwark) && ReprisalPvE.CanUse(out act, skipAoeCheck: true)) return true;
+            if (PassageOfArmsPvE.CanUse(out act)) return true;
         }
 
         return base.EmergencyAbility(nextGCD, out act);
     }
 
-    [RotationDesc(ActionID.ReprisalPvE, ActionID.DivineVeilPvE)]
+    /*[RotationDesc(ActionID.ReprisalPvE, ActionID.DivineVeilPvE)]
     protected override bool DefenseAreaAbility(IAction nextGCD, out IAction? act)
     {
 
@@ -102,9 +112,9 @@ public class PLD_DefaultLelia : PaladinRotation
         if (!Player.HasStatus(true, StatusID.Bulwark) && ReprisalPvE.CanUse(out act, skipAoeCheck: true)) return true;
         if (PassageOfArmsPvE.CanUse(out act)) return true;
         return base.DefenseAreaAbility(nextGCD, out act);
-    }
+    }*/
 
-    [RotationDesc(ActionID.SentinelPvE, ActionID.RampartPvE, ActionID.BulwarkPvE, ActionID.SheltronPvE, ActionID.ReprisalPvE)]
+    /*[RotationDesc(ActionID.SentinelPvE, ActionID.RampartPvE, ActionID.BulwarkPvE, ActionID.SheltronPvE, ActionID.ReprisalPvE)]
     protected override bool DefenseSingleAbility(IAction nextGCD, out IAction? act)
     {
 
@@ -132,7 +142,7 @@ public class PLD_DefaultLelia : PaladinRotation
         }
 
         return base.DefenseSingleAbility(nextGCD, out act);
-    }
+    }*/
 
     protected override bool AttackAbility(IAction nextGCD, out IAction? act)
     {
