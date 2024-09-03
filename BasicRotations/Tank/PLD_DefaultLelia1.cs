@@ -71,7 +71,7 @@ public class PLD_DefaultLelia : PaladinRotation
 
         //[DefenseSingleAbility]
         // If the player has the Hallowed Ground status, don't use any abilities.
-        if (!Player.HasStatus(true, StatusID.HallowedGround))
+        if (InCombat && !Player.HasStatus(true, StatusID.HallowedGround))
         {
             // If Bulwark can be used, use it and return true.
             if (InCombat && BulwarkPvE.CanUse(out act, skipAoeCheck: true)) return true;
@@ -80,24 +80,20 @@ public class PLD_DefaultLelia : PaladinRotation
             if (UseOath(out act, true)) return true;
 
             // If Rampart is not cooling down or has been cooling down for more than 60 seconds, and Sentinel can be used, use Sentinel and return true.
-            if ((!RampartPvE.Cooldown.IsCoolingDown || RampartPvE.Cooldown.ElapsedAfter(60)) && InCombat && SentinelPvE.CanUse(out act)) return true;
+            if (InCombat && (!RampartPvE.Cooldown.IsCoolingDown || RampartPvE.Cooldown.ElapsedAfter(60)) && SentinelPvE.CanUse(out act)) return true;
 
             // If Sentinel is at an enough level and is cooling down for more than 60 seconds, or if Sentinel is not at an enough level, and Rampart can be used, use Rampart and return true.
-            if ((SentinelPvE.EnoughLevel && SentinelPvE.Cooldown.IsCoolingDown && SentinelPvE.Cooldown.ElapsedAfter(60) || !SentinelPvE.EnoughLevel) && InCombat && RampartPvE.CanUse(out act)) return true;
-            //UP            
-            //HP90%で強制ランパート
-            //if (RampartPvE.CanUse(out act, usedUp: true)) return true;
-            //UPEnd
-            // If Reprisal can be used, use it and return true.
-            
-            //if (ReprisalPvE.CanUse(out act)) return true;
+            if ((SentinelPvE.EnoughLevel && SentinelPvE.Cooldown.IsCoolingDown && SentinelPvE.Cooldown.ElapsedAfter(60) || !SentinelPvE.EnoughLevel) && InCombat && Player.GetHealthRatio() < 0.8f && RampartPvE.CanUse(out act)) return true;
 
+            // If Reprisal can be used, use it and return true.
+            if (InCombat && !IsMoving && ReprisalPvE.Target.Target?.DistanceToPlayer() < 3 && ReprisalPvE.CanUse(out act, skipAoeCheck: true)) return true;
         }
 
         //[DefenseAreaAbility]
+        if (InCombat)
         {
             if (DivineVeilPvE.CanUse(out act)) return true;
-            if (!Player.HasStatus(true, StatusID.Bulwark) && ReprisalPvE.CanUse(out act, skipAoeCheck: true)) return true;
+            if (InCombat && !IsMoving && ReprisalPvE.Target.Target?.DistanceToPlayer() < 3 && !Player.HasStatus(true, StatusID.Bulwark) && ReprisalPvE.CanUse(out act, skipAoeCheck: true)) return true;
             if (PassageOfArmsPvE.CanUse(out act)) return true;
         }
 
