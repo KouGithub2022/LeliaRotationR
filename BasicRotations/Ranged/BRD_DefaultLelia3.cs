@@ -95,7 +95,7 @@ public sealed class BRD_DefaultLelia3 : BardRotation
 //UpDate
         if (IsBurst && Song != Song.NONE && MagesBalladPvE.EnoughLevel)
         {
-            if (BloodletterPvE.CanUse(out act)) return true;
+            if (Song == Song.WANDERER && BloodletterPvE.CanUse(out act)) return true;
 
             if (RadiantFinalePvE.CanUse(out act) && Song == Song.WANDERER && (!BattleVoicePvE.Cooldown.IsCoolingDown || BattleVoicePvE.Cooldown.ElapsedAfter(118)))
             {
@@ -105,7 +105,7 @@ public sealed class BRD_DefaultLelia3 : BardRotation
 
             if (BattleVoicePvE.CanUse(out act, skipAoeCheck: true))
             {
-                if (Player.HasStatus(true, StatusID.RadiantFinale_2964) /*&& RadiantFinalePvE.Cooldown.ElapsedOneChargeAfterGCD(1)*/) return true;
+                if (Player.HasStatus(true, StatusID.RadiantFinale_2964)/* && RadiantFinalePvE.Cooldown.ElapsedOneChargeAfterGCD(1)*/) return true;
             }
 
             if (RagingStrikesPvE.CanUse(out act))
@@ -113,7 +113,7 @@ public sealed class BRD_DefaultLelia3 : BardRotation
                 if (nextGCD.IsTheSameTo(true, BattleVoicePvE)) return true;
                 if (nextGCD.IsTheSameTo(true, RadiantEncorePvE)) return true;
 
-                if (Player.HasStatus(true, StatusID.RadiantFinale) /*&& RadiantFinalePvE.Cooldown.ElapsedOneChargeAfterGCD(1)*/) return true;
+                if (Player.HasStatus(true, StatusID.BattleVoice) /*&& RadiantFinalePvE.Cooldown.ElapsedOneChargeAfterGCD(1)*/) return true;
             }
         }
 //UpDateEnd
