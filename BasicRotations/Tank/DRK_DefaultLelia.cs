@@ -63,7 +63,7 @@ public sealed class DRK_DefaultLelia : DarkKnightRotation
 
         //if (!InTwoMIsBurst && DarkMissionaryPvE.CanUse(out act)) return true;
         //if (!InTwoMIsBurst && ReprisalPvE.CanUse(out act, skipAoeCheck: true)) return true;
-        
+
         if (InCombat && ReprisalPvE.CanUse(out act)) return true;
 
         return base.EmergencyAbility(nextGCD, out act);
@@ -171,9 +171,17 @@ public sealed class DRK_DefaultLelia : DarkKnightRotation
     {
         if (DisesteemPvE.CanUse(out act)) return true;
 
+        if (/*DeliriumStacks == 3 &&*/ ScarletDeliriumPvE.CanUse(out act, skipComboCheck: true)) return true;
+        if (/*DeliriumStacks == 2 &&*/ ComeuppancePvE.CanUse(out act, skipComboCheck: true)) return true;
+        if (/*DeliriumStacks == 1 &&*/ TorcleaverPvE.CanUse(out act, skipComboCheck: true)) return true;
+
         //Use Blood
         if (UseBlood)
         {
+            if (/*DeliriumStacks == 3 &&*/ ScarletDeliriumPvE.CanUse(out act, skipComboCheck: true)) return true;
+            if (/*DeliriumStacks == 2 &&*/ ComeuppancePvE.CanUse(out act, skipComboCheck: true)) return true;
+            if (/*DeliriumStacks == 1 &&*/ TorcleaverPvE.CanUse(out act, skipComboCheck: true)) return true;
+
             if (QuietusPvE.CanUse(out act, skipComboCheck: true)) return true;
             if (BloodspillerPvE.CanUse(out act, skipComboCheck: true)) return true;
         }

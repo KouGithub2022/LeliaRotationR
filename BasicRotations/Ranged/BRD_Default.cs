@@ -216,13 +216,13 @@ public sealed class BRD_DefaultCustom : BardRotation
     protected override bool GeneralGCD(out IAction? act)
     {
         if (IronJawsPvE.CanUse(out act)) return true;
-        /*if (IronJawsPvE.CanUse(out act, skipStatusProvideCheck: true) && (IronJawsPvE.Target.Target?.WillStatusEnd(30, true, IronJawsPvE.Setting.TargetStatusProvide ?? []) ?? false))
+        if (IronJawsPvE.CanUse(out act, skipStatusProvideCheck: true) && (IronJawsPvE.Target.Target?.WillStatusEnd(30, true, IronJawsPvE.Setting.TargetStatusProvide ?? []) ?? false))
         {
             if (Player.HasStatus(true, StatusID.BattleVoice) && Player.WillStatusEndGCD(1, 0, true, StatusID.BattleVoice)) return true;
-        }*/
+        }
 
         //UpDate
-        if (IronJawsPvE.CanUse(out act, skipStatusProvideCheck: true) && (IronJawsPvE.Target.Target?.WillStatusEnd(30, true, IronJawsPvE.Setting.TargetStatusProvide ?? []) ?? false))
+        /*if (IronJawsPvE.CanUse(out act, skipStatusProvideCheck: true) && (IronJawsPvE.Target.Target?.WillStatusEnd(30, true, IronJawsPvE.Setting.TargetStatusProvide ?? []) ?? false))
         {
             if (IronJawsPvE.CanUse(out act, skipStatusProvideCheck: true) &&
                 (IronJawsPvE.Target.Target?.WillStatusEnd(30, true, IronJawsPvE.Setting.TargetStatusProvide ?? []) ?? false))
@@ -238,7 +238,7 @@ public sealed class BRD_DefaultCustom : BardRotation
                     return true;
                 }
             }
-        }
+        }*/
         //UpDateEnd
 
         if (Song == Song.WANDERER && Player.HasStatus(true, StatusID.RagingStrikes) && SoulVoice == 100)

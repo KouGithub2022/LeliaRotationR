@@ -1,10 +1,10 @@
 namespace DefaultRotations.Ranged;
 
-[Rotation("Lelia's 3-1", CombatType.PvE, GameVersion = "7.05",
+[Rotation("Lelia's 3-2", CombatType.PvE, GameVersion = "7.05",
     Description = "Please make sure that the three song times add up to 120 seconds, Wanderers default first song for now.")]
 [SourceCode(Path = "main/DefaultRotations/Ranged/BRD_Default.cs")]
 [Api(3)]
-public sealed class BRD_DefaultLelia31 : BardRotation
+public sealed class BRD_DefaultLelia32 : BardRotation
 {
     #region Config Options
     [RotationConfig(CombatType.PvE, Name = "Tincture/Gemdraught Usage (Experimental)")]
@@ -93,27 +93,29 @@ public sealed class BRD_DefaultLelia31 : BardRotation
         }
 
 //UpDate
-        if (IsBurst && Song != Song.NONE && MagesBalladPvE.EnoughLevel)
+        if (IsBurst && Song == Song.WANDERER)
         {
+
             if (Song == Song.WANDERER && BloodletterPvE.CanUse(out act)) return true;
 
-            if (RadiantFinalePvE.CanUse(out act) && Song == Song.WANDERER && (!BattleVoicePvE.Cooldown.IsCoolingDown || BattleVoicePvE.Cooldown.ElapsedAfter(118)))
+            if (BattleVoicePvE.CanUse(out act, skipAoeCheck: true))
+            //if (RadiantFinalePvE.CanUse(out act) && Song == Song.WANDERER && (!BattleVoicePvE.Cooldown.IsCoolingDown || BattleVoicePvE.Cooldown.ElapsedAfter(118)))
             {
                 if (BindWANDEnough && Song == Song.WANDERER && TheWanderersMinuetPvE.EnoughLevel) return true;
                 if (!BindWANDEnough) return true;
             }
 
-            if (BattleVoicePvE.CanUse(out act, skipAoeCheck: true))
+            if (RadiantFinalePvE.CanUse(out act) && Song == Song.WANDERER)
+            //if (BattleVoicePvE.CanUse(out act, skipAoeCheck: true))
             {
-                if (Player.HasStatus(true, StatusID.RadiantFinale_2964)/* && RadiantFinalePvE.Cooldown.ElapsedOneChargeAfterGCD(1)*/) return true;
+                if (Player.HasStatus(true, StatusID.BattleVoice)/* && RadiantFinalePvE.Cooldown.ElapsedOneChargeAfterGCD(1)*/) return true;
             }
 
             if (RagingStrikesPvE.CanUse(out act))
             {
-                if (nextGCD.IsTheSameTo(true, BattleVoicePvE)) return true;
-                if (nextGCD.IsTheSameTo(true, RadiantEncorePvE)) return true;
-
-                if (Player.HasStatus(true, StatusID.BattleVoice) /*&& RadiantFinalePvE.Cooldown.ElapsedOneChargeAfterGCD(1)*/) return true;
+                //if (nextGCD.IsTheSameTo(true, BattleVoicePvE)) return true;
+                //if (nextGCD.IsTheSameTo(true, RadiantEncorePvE)) return true;
+                if (Player.HasStatus(true, StatusID.RadiantFinale_2964) /*&& RadiantFinalePvE.Cooldown.ElapsedOneChargeAfterGCD(1)*/) return true;
             }
         }
 //UpDateEnd

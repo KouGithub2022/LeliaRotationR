@@ -91,8 +91,10 @@ public sealed class SMN_LeliaDefaultPvE2 : SummonerRotation
         if ((Player.HasStatus(false, StatusID.SearingLight) && InBahamut && (SummonBahamutPvE.Cooldown.ElapsedOneChargeAfterGCD(3) || !EnergyDrainPvE.Cooldown.IsCoolingDown) ||
             !SearingLightPvE.EnoughLevel || IsTargetBoss && IsTargetDying) && FesterPvE.CanUse(out act)) return true;
 
+//UpDate
         if (EnergySiphonPvE.CanUse(out act)) return true;
         if (EnergyDrainPvE.CanUse(out act)) return true;
+//UpDateEnd
 
         return base.AttackAbility(nextGCD, out act);
     }

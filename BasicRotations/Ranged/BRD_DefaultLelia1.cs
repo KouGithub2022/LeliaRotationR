@@ -2,7 +2,7 @@ using static FFXIVClientStructs.FFXIV.Client.Game.Character.Character.Delegates;
 
 namespace DefaultRotations.Ranged;
 
-[Rotation("Lelia's LowLevel", CombatType.PvE, GameVersion = "7.05",
+[Rotation("Lelia's Low", CombatType.PvE, GameVersion = "7.05",
     Description = "Please make sure that the three song times add up to 120 seconds, Wanderers default first song for now.")]
 [SourceCode(Path = "main/DefaultRotations/Ranged/BRD_Default.cs")]
 [Api(3)]
@@ -10,19 +10,19 @@ public sealed class BRD_DefaultLelia1 : BardRotation
 {
     #region Config Options
     //[RotationConfig(CombatType.PvE, Name = @"Use Raging Strikes on ""Wanderer's Minuet""")]
-    //[RotationConfig(CombatType.PvE, Name = "çŒ›è€…ã‚’ãƒ¡ãƒŒã‚¨ãƒƒãƒˆæ™‚ã«ä½¿ç”¨ã™ã‚‹ã€‚")]
+    //[RotationConfig(CombatType.PvE, Name = "–ÒÒ‚ğƒƒkƒGƒbƒg‚Ég—p‚·‚éB")]
     //public bool BindWAND { get; set; } = false;
 
     [Range(1, 45, ConfigUnitType.Seconds, 1)]
-    [RotationConfig(CombatType.PvE, Name = "æ—…ç¥ã®ãƒ¡ãƒŒã‚¨ãƒƒãƒˆã®ä½¿ç”¨æ™‚é–“")]
+    [RotationConfig(CombatType.PvE, Name = "—·_‚ÌƒƒkƒGƒbƒg‚Ìg—pŠÔ")]
     public float WANDTime { get; set; } = 43;
 
     [Range(0, 45, ConfigUnitType.Seconds, 1)]
-    [RotationConfig(CombatType.PvE, Name = "è³¢äººã®ãƒãƒ©ãƒ¼ãƒ‰ã®ä½¿ç”¨æ™‚é–“")]
+    [RotationConfig(CombatType.PvE, Name = "Œ«l‚Ìƒoƒ‰[ƒh‚Ìg—pŠÔ")]
     public float MAGETime { get; set; } = 40;
 
     [Range(0, 45, ConfigUnitType.Seconds, 1)]
-    [RotationConfig(CombatType.PvE, Name = "è»ç¥ã®ãƒ‘ã‚¤ã‚ªãƒ³ã®ä½¿ç”¨æ™‚é–“")]
+    [RotationConfig(CombatType.PvE, Name = "ŒR_‚ÌƒpƒCƒIƒ“‚Ìg—pŠÔ")]
     public float ARMYTime { get; set; } = 37;
 
     [RotationConfig(CombatType.PvE, Name = "First Song")]
@@ -82,17 +82,17 @@ public sealed class BRD_DefaultLelia1 : BardRotation
         {
             if (RadiantFinalePvE.EnoughLevel)
             {
-                if (BloodletterPvE.CanUse(out act)) return true;
+                if (Song == Song.WANDERER && BloodletterPvE.CanUse(out act)) return true;
 
                 if (RadiantFinalePvE.CanUse(out act) && Song == Song.WANDERER && (!BattleVoicePvE.Cooldown.IsCoolingDown || BattleVoicePvE.Cooldown.ElapsedAfter(118)))
                 {
-                    if (TheWanderersMinuetPvE.EnoughLevel) return true;
+                    if (Song == Song.WANDERER && TheWanderersMinuetPvE.EnoughLevel) return true;
                 }
 
                 if (BattleVoicePvE.CanUse(out act, skipAoeCheck: true) && Song == Song.WANDERER)
                 {
 
-                    if (Player.HasStatus(true, StatusID.RadiantFinale_2964) && RadiantFinalePvE.Cooldown.ElapsedOneChargeAfterGCD(1)) return true;
+                    if (Player.HasStatus(true, StatusID.RadiantFinale_2964) /*&& RadiantFinalePvE.Cooldown.ElapsedOneChargeAfterGCD(1)*/) return true;
                 }
 
                 if (RagingStrikesPvE.CanUse(out act, isLastAbility: true) && Song == Song.WANDERER)

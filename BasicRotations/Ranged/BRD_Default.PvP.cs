@@ -4,7 +4,7 @@ namespace DefaultRotations.Ranged;
     Description = "Please make sure that the three song times add up to 120 seconds!")]
 [SourceCode(Path = "main/DefaultRotations/Ranged/BRD_Default.PvP.cs")]
 
-[Api(2)]
+[Api(3)]
 public sealed class BRD_LeliaDefaultPvP : BardRotation
 {
     public static IBaseAction FinalFantasiaPvP = new BaseAction((ActionID)29401);
