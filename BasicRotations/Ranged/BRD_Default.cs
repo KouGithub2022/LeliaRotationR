@@ -1,15 +1,12 @@
 namespace DefaultRotations.Ranged;
 
-[Rotation("Original_Default", CombatType.PvE, GameVersion = "7.05",
+[Rotation("Default_Custom", CombatType.PvE, GameVersion = "7.05",
     Description = "Please make sure that the three song times add up to 120 seconds, Wanderers default first song for now.")]
 [SourceCode(Path = "main/DefaultRotations/Ranged/BRD_Default.cs")]
 [Api(3)]
-public sealed class BRD_DefaultOriginal : BardRotation
+public sealed class BRD_DefaultCustom : BardRotation
 {
     #region Config Options
-
-    [RotationConfig(CombatType.PvE, Name = "Tincture/Gemdraught Usage (Experimental)")]
-    public bool ExperimentalPot { get; set; } = false;
 
     [RotationConfig(CombatType.PvE, Name = @"Use Raging Strikes on ""Wanderer's Minuet""")]
     public bool BindWAND { get; set; } = true;
@@ -37,7 +34,9 @@ public sealed class BRD_DefaultOriginal : BardRotation
     private float MAGERemainTime => 45 - MAGETime;
     private float ARMYRemainTime => 45 - ARMYTime;
 
-    private static bool InBurstStatus => !Player.WillStatusEnd(0, true, StatusID.RagingStrikes);
+    private static bool InBurstStatus => (Player.Level > 50 && !Player.WillStatusEnd(0, true, StatusID.RagingStrikes))
+        || (Player.Level >= 50 && Player.Level < 90 && !Player.WillStatusEnd(0, true, StatusID.RagingStrikes) && !Player.WillStatusEnd(0, true, StatusID.BattleVoice)) 
+        || (MinstrelsCodaTrait.EnoughLevel && !Player.WillStatusEnd(0, true, StatusID.RagingStrikes) && !Player.WillStatusEnd(0, true, StatusID.RadiantFinale) && !Player.WillStatusEnd(0, true, StatusID.BattleVoice));
 
     #endregion
 
@@ -73,7 +72,7 @@ public sealed class BRD_DefaultOriginal : BardRotation
     {
         act = null;
 
-        if (IsBurst && ExperimentalPot)
+        if (IsBurst)
         {
             if (UseBurstMedicine(out act)) return true;
         }
@@ -101,40 +100,31 @@ public sealed class BRD_DefaultOriginal : BardRotation
 
         if (IsBurst && Song != Song.NONE && MagesBalladPvE.EnoughLevel)
         {
-            if (NewLogicType)
+            if (NewLogicType && Song == Song.WANDERER)
             {
                 if (BloodletterPvE.CanUse(out act)) return true;
 
-                if (RadiantFinalePvE.CanUse(out act, skipAoeCheck: true))
+                /*if (BloodletterPvE.CanUse(out act, usedUp: true) && HeartbreakShotPvE.Cooldown.CurrentCharges == 3) return true;
+                if (BloodletterPvE.CanUse(out act, usedUp: true) && HeartbreakShotPvE.Cooldown.CurrentCharges == 2)
                 {
-                    if (!BattleVoicePvE.Cooldown.IsCoolingDown || BattleVoicePvE.Cooldown.ElapsedAfter(110)) return true;
-                }
+                    if (!BattleVoicePvE.Cooldown.ElapsedAfter(116) || !BattleVoicePvE.Cooldown.IsCoolingDown) return true;
+                }*/
 
-                if (Song == Song.WANDERER && BattleVoicePvE.CanUse(out act, skipAoeCheck: true))
-                {
-                    if (Player.HasStatus(true, StatusID.RadiantFinale)) return true;
-                }
+                if (((!RadiantFinalePvE.EnoughLevel && !RagingStrikesPvE.Cooldown.IsCoolingDown) 
+                    || (RadiantFinalePvE.EnoughLevel && !RadiantFinalePvE.Cooldown.IsCoolingDown && RagingStrikesPvE.EnoughLevel && !RagingStrikesPvE.Cooldown.IsCoolingDown)) 
+                    && BattleVoicePvE.CanUse(out act, isLastAbility: false)) return true;
 
-                if (RagingStrikesPvE.CanUse(out act, isLastAbility: true))
-                {
-                    if (RadiantFinalePvE.EnoughLevel)
-                    {
-                        if (Player.HasStatus(true, StatusID.RadiantFinale) && Player.HasStatus(true, StatusID.BattleVoice)) return true;
-                    }
-                    else if (!RadiantFinalePvE.EnoughLevel && BattleVoicePvE.EnoughLevel)
-                    {
-                        if (Player.HasStatus(true, StatusID.BattleVoice)) return true;
-                    }
-                    else
-                    {
-                        if (!BindWANDEnough) return true;
-                    }
-                }
+                if (!Player.WillStatusEnd(0, true, StatusID.BattleVoice) && RadiantFinalePvE.CanUse(out act)) return true;
+
+                if (((RadiantFinalePvE.EnoughLevel && !Player.WillStatusEnd(0, true, StatusID.RadiantFinale) && !Player.WillStatusEnd(0, true, StatusID.BattleVoice))
+                    || (!RadiantFinalePvE.EnoughLevel && BattleVoicePvE.EnoughLevel && !Player.WillStatusEnd(0, true, StatusID.BattleVoice))
+                    || (!RadiantFinalePvE.EnoughLevel && !BattleVoicePvE.EnoughLevel))
+                    && RagingStrikesPvE.CanUse(out act)) return true;
             }
 
             if (!NewLogicType)
             {
-                if (RagingStrikesPvE.CanUse(out act, isLastAbility: true))
+                if (RagingStrikesPvE.CanUse(out act))
                 {
                     if (BindWANDEnough && Song == Song.WANDERER && TheWanderersMinuetPvE.EnoughLevel) return true;
                     if (!BindWANDEnough) return true;
@@ -226,10 +216,36 @@ public sealed class BRD_DefaultOriginal : BardRotation
     protected override bool GeneralGCD(out IAction? act)
     {
         if (IronJawsPvE.CanUse(out act)) return true;
+        /*if (IronJawsPvE.CanUse(out act, skipStatusProvideCheck: true) && (IronJawsPvE.Target.Target?.WillStatusEnd(30, true, IronJawsPvE.Setting.TargetStatusProvide ?? []) ?? false))
+        {
+            if (Player.HasStatus(true, StatusID.BattleVoice) && Player.WillStatusEndGCD(1, 0, true, StatusID.BattleVoice)) return true;
+        }*/
+
+        //UpDate
         if (IronJawsPvE.CanUse(out act, skipStatusProvideCheck: true) && (IronJawsPvE.Target.Target?.WillStatusEnd(30, true, IronJawsPvE.Setting.TargetStatusProvide ?? []) ?? false))
         {
-            if (Player.HasStatus(true, StatusID.RagingStrikes) && Player.WillStatusEndGCD(1, 0, true, StatusID.RagingStrikes)) return true;
+            if (IronJawsPvE.CanUse(out act, skipStatusProvideCheck: true) &&
+                (IronJawsPvE.Target.Target?.WillStatusEnd(30, true, IronJawsPvE.Setting.TargetStatusProvide ?? []) ?? false))
+            {
+                if (Player.HasStatus(true, StatusID.BattleVoice) &&
+                    Player.WillStatusEndGCD(1, 0, true, StatusID.RagingStrikes))
+                {
+                    return true;
+                }
+                else if (Player.HasStatus(true, StatusID.RadiantFinale) &&
+                         Player.WillStatusEndGCD(1, 0, true, StatusID.RadiantFinale))
+                {
+                    return true;
+                }
+            }
         }
+        //UpDateEnd
+
+        if (Song == Song.WANDERER && Player.HasStatus(true, StatusID.RagingStrikes) && SoulVoice == 100)
+        {
+            if (ApexArrowPvE.CanUse(out act, skipAoeCheck: true)) return true;
+        }
+        if (BlastArrowPvE.CanUse(out act)) return true;
 
         if (ResonantArrowPvE.CanUse(out act)) return true;
 
@@ -242,7 +258,7 @@ public sealed class BRD_DefaultOriginal : BardRotation
         if (BlastArrowPvE.CanUse(out act))
         {
             if (!Player.HasStatus(true, StatusID.RagingStrikes)) return true;
-            if (Player.HasStatus(true, StatusID.RagingStrikes) && BarragePvE.Cooldown.IsCoolingDown) return true;
+            if (Player.HasStatus(true, StatusID.RagingStrikes) /*&& BarragePvE.Cooldown.IsCoolingDown*/) return true;
         }
 
         //aoe
@@ -273,6 +289,7 @@ public sealed class BRD_DefaultOriginal : BardRotation
     private bool CanUseApexArrow(out IAction act)
     {
         if (!ApexArrowPvE.CanUse(out act, skipAoeCheck: true)) return false;
+        if (Player.HasStatus(true, StatusID.RadiantFinale)) return false;
 
         if (QuickNockPvE.CanUse(out _) && SoulVoice == 100) return true;
 
@@ -297,6 +314,7 @@ public sealed class BRD_DefaultOriginal : BardRotation
         if (HeartbreakShotPvE.CanUse(out act, usedUp: true))
         {
             if ((!isRagingStrikesLevel)
+                /*|| (Song == Song.WANDERER && !Player.HasStatus(true, StatusID.BattleVoice) && HeartbreakShotPvE.Cooldown.CurrentCharges >= 2)*/
                 || (isRagingStrikesLevel && !isBattleVoiceLevel && Player.HasStatus(true, StatusID.RagingStrikes))
                 || (isBattleVoiceLevel && !isRadiantFinaleLevel && Player.HasStatus(true, StatusID.RagingStrikes) && Player.HasStatus(true, StatusID.BattleVoice))
                 || isRadiantFinaleLevel && Player.HasStatus(true, StatusID.RagingStrikes) && Player.HasStatus(true, StatusID.BattleVoice) && Player.HasStatus(true, StatusID.RadiantFinale)) return true;
