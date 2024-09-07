@@ -1,1 +1,0 @@
-﻿[assembly: AssemblyLink(Donate = "", UserName = "Lelia", Repository = "LeliaDefaults")]
