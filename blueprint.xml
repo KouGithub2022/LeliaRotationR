@@ -4,7 +4,7 @@
 		<Region Name="EN/DE/FR/JP" Version="2025.03.27.0000.0000">
 			<Opcodes>
 				<Opcode Name="StatusEffectList" Id="424" />
-				<Opcode Name="StatusEffectList2" Id="645" />
+				<Opcode Name="StatusEffectList2" Id="615" />
 				<Opcode Name="StatusEffectList3" Id="962" />
 				<Opcode Name="Ability1" Id="447" />
 				<Opcode Name="Ability8" Id="260" />
