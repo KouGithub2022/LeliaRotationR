@@ -7,8 +7,6 @@ Download the latest version of LeliaRotationsR:
 https://github.com/KouGithub2022/LeliaRotationR/releases/latest/download/LeliaRotationsR.dll
 ```
 
-```
-https://github.com/KouGithub2022/LeliaRotationR/releases/latest/download/PvPRotationsLelia.dll
-```
 ![image](https://github.com/user-attachments/assets/f18c3ef8-3ab9-4ec5-8b80-2c5b7b8786f8)
+
 
