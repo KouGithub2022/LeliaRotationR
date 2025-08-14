@@ -1,0 +1,21 @@
+[
+  {
+    "Author": "RebornTeam",
+    "Name": "RotationSolverReborn(PvP)",
+    "Punchline": "",
+    "Description": "",
+    "Changelog": "",
+    "IsHide": false,
+    "InternalName": "RotationSolverReborn",
+    "AssemblyVersion": "7.3.0.31",
+    "IsTestingExclusive": false,
+    "ApplicableVersion": "any",
+    "DalamudApiLevel": 13,
+    "DownloadCount": 0,
+    "LastUpdate": 0,
+    "DownloadLinkInstall": "https://github.com//KouGithub2022/LeliaRotationR/releases/latest/download/RSR.tar",
+    "DownloadLinkUpdate": "https://github.com//KouGithub2022/LeliaRotationR/releases/latest/download/RSR.tar",
+    "SupportsProfiles": true,
+    "IconUrl": ""
+  }
+]
